@@ -21,3 +21,7 @@ Route::get("/note/{id}", "NotesController@show");
 Route::post("/note/{id}/delete", "NotesController@delete");
 Route::get("/note/{id}/edit", "NotesController@edit");
 Route::post("/note/{id}/update", "NotesController@update");
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
