@@ -50,22 +50,36 @@ class NotesController extends Controller
     {
         $note = Note::find($id);
 
-        return view("note.edit", compact("note"));
+        if ($note->user_id == auth()->user()->id) {
+            return view("note.edit", compact("note"));
+        } else {
+            return redirect("/");
+        }
     }
 
     public function update(Request $request, string $id)
     {
         $note = Note::find($id);
-        $note->title = $request->input("title");
-        $note->content = $request->input("content");
-        $note->save();
 
-        return redirect("/note/{$note->id}");
+        if ($note->user_id == auth()->user()->id) {
+            $note->title = $request->input("title");
+            $note->content = $request->input("content");
+            $note->save();
+
+            return redirect("/note/{$note->id}");
+        } else {
+            return redirect("/");
+        }
     }
 
     public function delete(string $id)
     {
-        Note::find($id)->increment("deleted");
+        $note = Note::find($id);
+
+        if ($note->user_id == auth()->user()->id) {
+            $note->deleted = 1;
+            $note->save();
+        }
 
         return redirect("/");
     }
