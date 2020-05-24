@@ -14,7 +14,7 @@ class NotesController extends Controller
 
     public function index()
     {
-        $notes = Note::where("deleted", "0")->get();
+        $notes = Note::where("deleted", "0")->where("user_id", auth()->user()->id)->get();
 
         return view("home", compact("notes"));
     }
@@ -23,7 +23,11 @@ class NotesController extends Controller
     {
         $note = Note::find($id);
 
-        return view("note.show", compact("note"));
+        if ($note->user_id == auth()->user()->id) {
+            return view("note.show", compact("note"));
+        } else {
+            return redirect("/");
+        }
     }
 
     public function create()
@@ -36,6 +40,7 @@ class NotesController extends Controller
         $note = new Note();
         $note->title = $request->input("title");
         $note->content = $request->input("content");
+        $note->user_id = auth()->user()->id;
         $note->save();
 
         return redirect("/");
